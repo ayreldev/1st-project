@@ -1,65 +1,53 @@
 import React, { useState } from 'react';
-import './styles.css';
 
 const UserForm = ({ addUser }) => {
-  const [user, setUser] = useState({
-    name: '',
-    email: '',
-    photo: null
-  });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'photo' && files[0]) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUser({ ...user, photo: reader.result });
-      };
-      reader.readAsDataURL(files[0]);
-    } else {
-      setUser({ ...user, [name]: value });
-    }
-  };
-
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!validateEmail(user.email)) {
-      setError('Email inválido');
-      setSuccess('');
+    if (!name || !email) {
+      alert('Nome e E-mail são obrigatórios');
       return;
     }
-
-    addUser(user);
-    setUser({ name: '', email: '', photo: null });
-    setError('');
-    setSuccess('Usuário cadastrado com sucesso!');
+    const newUser = { name, email, address, phone };
+    addUser(newUser);
+    setShowSuccessMessage(true);
+    setName('');
+    setEmail('');
+    setAddress('');
+    setPhone('');
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 3000);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="user-form">
+    <form onSubmit={handleSubmit}>
       <label>
         Nome:
-        <input type="text" name="name" value={user.name} onChange={handleChange} required />
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
       </label>
       <label>
-        Email:
-        <input type="email" name="email" value={user.email} onChange={handleChange} required />
+        E-mail:
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
       </label>
       <label>
-        Foto:
-        <input type="file" name="photo" onChange={handleChange} required />
+        Endereço:
+        <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
       </label>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
-      <button type="submit">Cadastrar</button>
+      <label>
+        Telefone:
+        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      </label>
+      <button type="submit">Adicionar</button>
+
+      {showSuccessMessage && (
+        <p style={{ color: 'green' }}>Cadastro realizado com sucesso!</p>
+      )}
     </form>
   );
 };

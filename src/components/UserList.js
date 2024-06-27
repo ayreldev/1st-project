@@ -1,19 +1,27 @@
 import React from 'react';
-import './styles.css';
+import { useAuth } from '../contexts/AuthContext';
 
-const UserList = ({ users, deleteUser }) => {
+const UserList = () => {
+  const { users, deleteUser } = useAuth();
+
+  const handleDelete = (index) => {
+    deleteUser(index);
+  };
+
   return (
-    <div className="user-list">
-      {users.map((user, index) => (
-        <div key={index} className="user-card">
-          {user.photo && (
-            <img src={user.photo} alt={user.name} />
-          )}
-          <h3>{user.name}</h3>
-          <p>{user.email}</p>
-          <button onClick={() => deleteUser(index)} className="delete-button">Excluir</button>
-        </div>
-      ))}
+    <div>
+      <h2>Lista de Usuários</h2>
+      <ul>
+        {users.map((user, index) => (
+          <li key={index}>
+            <p>Nome: {user.name}</p>
+            <p>E-mail: {user.email}</p>
+            <p>Endereço: {user.address}</p>
+            <p>Telefone: {user.phone}</p>
+            <button onClick={() => handleDelete(index)}>Excluir</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
